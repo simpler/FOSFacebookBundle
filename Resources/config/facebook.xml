@@ -4,14 +4,22 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <services>
+    <parameters>
+        <parameter key="fos_facebook.proxy" type="collection">
+            <parameter key="server" />
+            <parameter key="port" />
+            <parameter key="authentication" />
+        </parameter>
+    </parameters>
 
+    <services>
         <service id="fos_facebook.api" class="%fos_facebook.api.class%">
             <argument type="collection">
                 <argument key="appId">%fos_facebook.app_id%</argument>
                 <argument key="secret">%fos_facebook.secret%</argument>
                 <argument key="cookie">%fos_facebook.cookie%</argument>
                 <argument key="domain">%fos_facebook.domain%</argument>
+                <argument key="proxy">%fos_facebook.proxy%</argument>
             </argument>
             <argument type="service" id="session" />
         </service>

@@ -52,6 +52,12 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('twig')->defaultValue('FOS\FacebookBundle\Twig\Extension\FacebookExtension')->end()
                     ->end()
                 ->end()
+                ->arrayNode('proxy')
+                    ->children()
+                        ->scalarNode('server')->end()
+                        ->scalarNode('authentication')->end()
+                    ->end()
+                ->end()
                 ->arrayNode('permissions')->prototype('scalar')->end()
             ->end();
 

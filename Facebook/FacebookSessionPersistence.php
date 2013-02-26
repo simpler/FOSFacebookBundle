@@ -17,6 +17,7 @@ class FacebookSessionPersistence extends \BaseFacebook
     protected $session;
     protected $prefix;
     protected static $kSupportedKeys = array('state', 'code', 'access_token', 'user_id');
+    protected $proxy;
 
     /**
      * @param array $config the application configuration.
@@ -27,6 +28,9 @@ class FacebookSessionPersistence extends \BaseFacebook
         $this->session = $session;
         $this->prefix  = $prefix;
 
+        // Added proxy settings
+        $this->setProxy($config['proxy']);
+
         $this->setAppId($config['appId']);
         $this->setAppSecret($config['secret']);
         if (isset($config['fileUpload'])) {
@@ -34,6 +38,25 @@ class FacebookSessionPersistence extends \BaseFacebook
         }
         // Add trustProxy configuration
         $this->trustForwarded = isset($config['trustForwarded']) ? $config['trustForwarded'] : Request::isProxyTrusted();
+    }
+
+    protected function makeRequest($url, $params, $ch=null) {
+        if (!$ch) {
+          $ch = curl_init();
+        }
+        
+        // makeRequest overridden with proxy support
+        if (is_array($this->proxy) && $this->proxy['server']!='') {
+            curl_setopt($ch, CURLOPT_PROXY, $this->proxy['server']);
+            if (isset($this->proxy['authentication'])) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxy['authentication']);
+        }
+
+        parent::makeRequest($url, $params, $ch);
+    }
+
+    public function setProxy($proxy)
+    {
+        $this->proxy = $proxy;
     }
 
     public function getLoginUrl($params = array())
